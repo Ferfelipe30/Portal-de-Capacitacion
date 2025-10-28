@@ -1,6 +1,10 @@
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import check_password
 from django.contrib.auth.hashers import make_password
 from .models import usuarios, modulos, capacitaciones, inscripciones, insignias, usuario_insignias, comentarios, lecciones, progreso_lecciones, notificaciones, estadisticas
+
+User = get_user_model()
 
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
@@ -178,3 +182,18 @@ class EstadisticaSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'id_estadistica': {'read_only': True},
         }
+
+class EmailLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        email = data.get('email')
+        password = data.get('password')
+
+        user = User.objects.filter(email_iexact=email).first()
+        if user is None or not check_password(password, user.password):
+            raise serializers.ValidationError("Credenciales inválidas.")
+        
+        attrs["user"] = user # type: ignore
+        return attrs # type: ignore
