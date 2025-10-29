@@ -1,5 +1,9 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import authenticate
+from django.http import JsonResponse
+from django.views.decorators.http import require_GET
+from django.core.mail import send_mail
+from django.conf import settings
 from rest_framework import generics, status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -10,6 +14,18 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import usuarios, modulos, capacitaciones, inscripciones, insignias, usuario_insignias, comentarios, lecciones, progreso_lecciones, notificaciones, estadisticas
 from .serializers import UsuarioSerializer, ModuloSerializer, CapacitacionSerializer, InscripcionSerializer, InsigniaSerializer, InsigniaUsuarioSerializer, ComentarioSerializer, LeccionSerializer, ProgresoLeccionSerializer, NotificacionSerializer, EstadisticaSerializer, EmailLoginSerializer
+
+@require_GET
+def test_email(request):
+    to = request.GET.get('to', settings.DEFAULT_FROM_EMAIL)
+    sent = send_mail(
+        subject='Prueba de notificación',
+        message='Este es un correo de prueba desde Django.',
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[to],
+        fail_silently=False,
+    )
+    return JsonResponse({'sent': bool(sent), 'to': to})
 
 class UsuarioList(generics.ListCreateAPIView):
     queryset = usuarios.objects.all()
