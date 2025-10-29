@@ -1,15 +1,20 @@
-import { CURSOS_MOCK } from '../../capacitaciones/mock/cursos';
-import { TODAS_LAS_CATEGORIAS } from '../../capacitaciones/types';
-import type { Nivel, TipoCap } from '../../capacitaciones/types';
-import { useCatalogo } from '../../capacitaciones/hooks/useCatalogo';
+import { useNavigate } from 'react-router-dom';
+import { CURSOS_MOCK } from '../mock/cursos';
+import type { Nivel, TipoCap } from '../types';
+import { TODAS_LAS_CATEGORIAS } from '../types';
+import { useCatalogo } from '../hooks/useCatalogo';
 
 const tipos: TipoCap[] = ['Interno', 'Externo'];
 const niveles: Nivel[] = ['Introductorio', 'Intermedio', 'Avanzado'];
 
 export default function Catalogo() {
-  // Reemplaza CURSOS_MOCK con datos reales traídos del backend cuando esté listo
+  const navigate = useNavigate();
   const { pestaña, setPestaña, filtros, resultado, toggleModulo, toggleTipo, toggleNivel, limpiar } =
     useCatalogo(CURSOS_MOCK);
+
+  const handleVerMas = (cursoId: string) => {
+    navigate(`/curso/${cursoId}`);
+  };
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: 24 }}>
@@ -60,9 +65,6 @@ export default function Catalogo() {
         </div>
 
         <div style={{ marginTop: 16, display: 'flex', gap: 8 }}>
-          <button onClick={() => { /* en esta versión se aplica en vivo */ }} style={{ padding: '8px 12px' }}>
-            Aplicar Filtros
-          </button>
           <button onClick={limpiar} style={{ padding: '8px 12px' }}>
             Limpiar Filtros
           </button>
@@ -85,6 +87,7 @@ export default function Catalogo() {
                 border: '1px solid #d0d7de',
                 background: pestaña === tab ? '#0ea5e9' : '#fff',
                 color: pestaña === tab ? '#fff' : '#111',
+                cursor: 'pointer',
               }}
             >
               {tab}
@@ -113,7 +116,19 @@ export default function Catalogo() {
                 </div>
                 <h3 style={{ margin: '4px 0 6px' }}>{c.titulo}</h3>
                 <p style={{ color: '#6b7280', minHeight: 44 }}>{c.descripcion}</p>
-                <button style={{ marginTop: 8, width: '100%', padding: '8px 12px', background: '#0ea5e9', color: '#fff', borderRadius: 8 }}>
+                <button 
+                  onClick={() => handleVerMas(c.id)}
+                  style={{ 
+                    marginTop: 8, 
+                    width: '100%', 
+                    padding: '8px 12px', 
+                    background: '#0ea5e9', 
+                    color: '#fff', 
+                    borderRadius: 8,
+                    border: 'none',
+                    cursor: 'pointer'
+                  }}
+                >
                   Ver más
                 </button>
               </div>
