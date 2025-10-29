@@ -1,0 +1,58 @@
+import type { Curso } from '../types';
+
+export const CURSOS_MOCK: Curso[] = [
+  {
+    id: 'c1',
+    titulo: 'Desarrollo Frontend Moderno',
+    descripcion: 'Interfaces dinámicas y responsivas.',
+    categorias: ['Frontend'],
+    tipo: 'Externo',
+    nivel: 'Avanzado',
+    etiquetas: ['React', 'UI'],
+  },
+  {
+    id: 'c2',
+    titulo: 'Introducción a Docker',
+    descripcion: 'Contenerización para despliegue.',
+    categorias: ['Backend'],
+    tipo: 'Interno',
+    nivel: 'Introductorio',
+    etiquetas: ['Docker'],
+  },
+  {
+    id: 'c3',
+    titulo: 'Fundamentos de Data Science',
+    descripcion: 'Análisis, visualización y modelos.',
+    categorias: ['Data Science'],
+    tipo: 'Interno',
+    nivel: 'Intermedio',
+    etiquetas: ['Pandas', 'ML'],
+  },
+  {
+    id: 'c4',
+    titulo: 'Bases de Datos SQL',
+    descripcion: 'Consultas para grandes volúmenes.',
+    categorias: ['Backend'],
+    tipo: 'Externo',
+    nivel: 'Intermedio',
+    etiquetas: ['SQL'],
+  },
+  {
+    id: 'c5',
+    titulo: 'Introducción a la Nube',
+    descripcion: 'Conceptos clave de cloud.',
+    categorias: ['Cloud'],
+    tipo: 'Interno',
+    nivel: 'Introductorio',
+    etiquetas: ['Cloud'],
+  },
+  {
+    id: 'c6',
+    titulo: 'Principios de Backend',
+    descripcion: 'APIs y servidores robustos.',
+    categorias: ['Backend'],
+    tipo: 'Interno',
+    nivel: 'Intermedio',
+    etiquetas: ['API'],
+  },
+];

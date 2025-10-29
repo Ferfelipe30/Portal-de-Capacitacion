@@ -5,6 +5,8 @@ import HomeIcon from '@mui/icons-material/Home';
 import HomeScreen from "./HomeScreen";
 import UsuarioScreen from "../commons/usuario/screens/usuarioScreen";
 import PersonIcon  from "@mui/icons-material/Person";
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import Catalogo from "../commons/capacitaciones/Catalogo/Catalogo";
 
 const drawerWidth = 240;
 
@@ -42,6 +44,12 @@ const AppLayout: React.FC = () => {
                             </ListItemIcon>
                             <ListItemText primary="Usuarios" />
                         </ListItemButton>
+                        <ListItemButton component={Link} to="/catalogo">
+                            <ListItemIcon>
+                                <MenuBookIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Catálogo" />
+                        </ListItemButton>
                     </List>
                 </Box>
             </Drawer>
@@ -50,6 +58,7 @@ const AppLayout: React.FC = () => {
                 <Routes>
                     <Route path="/" element={<HomeScreen />} />
                     <Route path="/usuarios" element={<UsuarioScreen />} />
+                    <Route path="/catalogo" element={<Catalogo />} />
                 </Routes>
             </Box>
         </Box>
