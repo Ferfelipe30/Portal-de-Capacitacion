@@ -3,6 +3,7 @@ import { Box, Typography, AppBar, Toolbar, Button, IconButton, Avatar, Menu, Men
 import { AccountCircle } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../commons/auth/context/AuthContext';
+import Dashboard from './Dashboard';
 
 const HomeScreen: React.FC = () => {
     const navigate = useNavigate();
@@ -91,13 +92,8 @@ const HomeScreen: React.FC = () => {
                     )}
                 </Toolbar>
             </AppBar>
-            <Box sx={{ mt: 10 }}>
-                <Typography variant="h4" gutterBottom>
-                    Bienvenido{isAuthenticated ? `, ${user?.nombre}` : ''}
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                    Sistema de gestión de capacitaciones
-                </Typography>
+            <Box sx={{ mt: 5 }}>
+                <Dashboard />
             </Box>
         </Box>
     );
