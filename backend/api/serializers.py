@@ -201,7 +201,10 @@ class EmailLoginSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         try:
-            user = usuarios.objects.get(email=attrs['email'])
+            email = attrs['email'].strip()
+            user = usuarios.objects.filter(email__iexact=email).first()
+            if not user:
+                raise usuarios.DoesNotExist()
             if not user.check_password(attrs['password']):
                 raise serializers.ValidationError('Credenciales inválidas.')
             

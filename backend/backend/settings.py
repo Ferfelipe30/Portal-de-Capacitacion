@@ -62,7 +62,7 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=config('JWT_REFRESH_TOKEN_LIFETIME', default=7, cast=int)),
     'AUTH_HEADER_TYPES': (config('JWT_AUTH_HEADER_TYPE', default='Bearer'),),
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
-    'USER_ID_FIELD': 'id_usuario',
+    # Keep defaults (USER_ID_FIELD='id') so tokens are compatible with Django's auth user model
     'USER_ID_CLAIM': 'user_id',
 }
 

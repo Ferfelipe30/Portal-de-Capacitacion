@@ -528,12 +528,25 @@ class LoginView(APIView):
         serializer = EmailLoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         
-        # Obtener usuario del serializer validado
+        # Obtener datos del usuario validado (modelo `api.usuarios`)
         user_data = serializer.validated_data['user']
-        user = usuarios.objects.get(id_usuario=user_data['id_usuario'])
-        
-        # Generar tokens JWT
-        refresh = RefreshToken.for_user(user)
+        raw_password = request.data.get('password')
+
+        # Asegurar que existe un usuario del sistema auth para JWT (get_user_model())
+        # Usamos el email como username; si no existe lo creamos/actualizamos contraseña.
+        from django.contrib.auth import get_user_model
+        AuthUser = get_user_model()
+        auth_user, created = AuthUser.objects.get_or_create(
+            username=user_data['email'],
+            defaults={'email': user_data['email']}
+        )
+        # Actualizamos la contraseña con la ingresada (se hashea internamente)
+        if raw_password:
+            auth_user.set_password(raw_password)
+            auth_user.save(update_fields=['password'])
+
+        # Generar tokens JWT para el usuario de auth
+        refresh = RefreshToken.for_user(auth_user)
         
         return Response({
             'success': True,
