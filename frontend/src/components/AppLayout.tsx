@@ -9,18 +9,20 @@ import {
   ListItemText,
   Typography,
   Divider,
+  Avatar,
 } from '@mui/material';
-import DashboardIcon from '@mui/icons-material/Dashboard';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import BuildIcon from '@mui/icons-material/Build';
-import PersonIcon from "@mui/icons-material/Person";
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import HomeScreen from "./HomeScreen";
+import HomeIcon from '@mui/icons-material/Home';
+import SchoolIcon from '@mui/icons-material/School';
 import UsuarioScreen from "../commons/usuario/screens/usuarioScreen";
 import Catalogo from "../commons/capacitaciones/Catalogo/Catalogo";
 import AdminCursosScreen from "../commons/capacitaciones/screens/AdminCursosScreen";
 import CursoDetalleScreen from "../commons/capacitaciones/screens/CursoDetalleScreen";
+import Dashboard from "./Dashboard";
 import { useAuth } from "../commons/auth/context/AuthContext";
 
 const drawerWidth = 240;
@@ -50,138 +52,168 @@ const AppLayout: React.FC = () => {
           '& .MuiDrawer-paper': {
             width: drawerWidth,
             boxSizing: 'border-box',
-            bgcolor: '#fafafa',
+            bgcolor: '#ffffff',
+            borderRight: '1px solid #e0e0e0',
           },
         }}
         variant="permanent"
         anchor="left"
       >
-        {/* Header del Drawer */}
-        <Box sx={{ p: 2.5, bgcolor: 'white', borderBottom: '1px solid #e0e0e0' }}>
-          <Typography variant="h6" fontWeight="bold" sx={{ mb: 0.5 }}>
-            Portal de Capacitación
+        {/* Logo y título */}
+        <Box sx={{ p: 2.5, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box
+            sx={{
+              width: 32,
+              height: 32,
+              bgcolor: '#1976d2',
+              borderRadius: 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+            }}
+          >
+            <SchoolIcon fontSize="small" />
+          </Box>
+          <Typography variant="h6" fontWeight="bold">
+            Training Portal
           </Typography>
-          {isAdminOrInstructor && (
-            <Typography variant="caption" color="text.secondary">
-              Modo Administrador
-            </Typography>
-          )}
         </Box>
 
+        {/* Perfil del usuario */}
+        <Box sx={{ px: 2, py: 2.5, bgcolor: '#f5f5f5', mx: 2, borderRadius: 2, mb: 2 }}>
+            <Avatar
+              src={user?.foto_perfil ?? undefined}
+              sx={{ width: 40, height: 40, bgcolor: '#1976d2' }}
+            >
+              {user?.nombre?.[0]}{user?.apellido?.[0]}
+            </Avatar>
+            <Box sx={{ flex: 1, overflow: 'hidden' }}>
+              <Typography variant="body2" fontWeight="bold" noWrap>
+                {user?.nombre} {user?.apellido}
+              </Typography>
+              <Typography variant="caption" color="text.secondary" noWrap>
+                {user?.rol === 'admin' ? 'Administrator' : user?.rol === 'instructor' ? 'Instructor' : 'Software Engineer'}
+              </Typography>
+            </Box>
+          </Box>
+
         {/* Lista de navegación */}
-        <Box sx={{ overflow: 'auto', mt: 1 }}>
-          <List>
+        <Box sx={{ overflow: 'auto', flex: 1 }}>
+          <List sx={{ px: 1 }}>
             <ListItemButton 
               onClick={() => handleNavigation('/dashboard')}
               sx={{ 
-                mx: 1, 
-                borderRadius: 1,
-                '&:hover': { bgcolor: '#e3f2fd' }
+                borderRadius: 1.5,
+                mb: 0.5,
+                bgcolor: '#E3F2FD',
+                '&:hover': { bgcolor: '#BBDEFB' }
               }}
             >
               <ListItemIcon>
-                <DashboardIcon />
+                <HomeIcon sx={{ color: '#1976d2' }} />
               </ListItemIcon>
-              <ListItemText primary="Dashboard" />
+              <ListItemText 
+                primary="Home" 
+                primaryTypographyProps={{ 
+                  fontWeight: 'medium',
+                  color: '#1976d2'
+                }}
+              />
             </ListItemButton>
 
             <ListItemButton 
               onClick={() => handleNavigation('/catalogo')}
               sx={{ 
-                mx: 1, 
-                borderRadius: 1,
-                '&:hover': { bgcolor: '#e3f2fd' }
+                borderRadius: 1.5,
+                mb: 0.5,
+                '&:hover': { bgcolor: '#f5f5f5' }
               }}
             >
               <ListItemIcon>
                 <MenuBookIcon />
               </ListItemIcon>
-              <ListItemText primary="Catálogo de Cursos" />
+              <ListItemText primary="Course Catalog" />
+            </ListItemButton>
+
+            <ListItemButton 
+              onClick={() => handleNavigation('/schedule')}
+              sx={{ 
+                borderRadius: 1.5,
+                mb: 0.5,
+                '&:hover': { bgcolor: '#f5f5f5' }
+              }}
+            >
+              <ListItemIcon>
+                <CalendarTodayIcon />
+              </ListItemIcon>
+              <ListItemText primary="My Schedule" />
             </ListItemButton>
 
             {/* Mostrar Administración solo a admin e instructor */}
             {isAdminOrInstructor && (
-              <ListItemButton 
-                onClick={() => handleNavigation('/admin/cursos')}
-                sx={{ 
-                  mx: 1, 
-                  borderRadius: 1,
-                  bgcolor: '#e3f2fd',
-                  '&:hover': { bgcolor: '#bbdefb' }
-                }}
-              >
-                <ListItemIcon>
-                  <BuildIcon sx={{ color: '#1976d2' }} />
-                </ListItemIcon>
-                <ListItemText 
-                  primary="Administración" 
-                  primaryTypographyProps={{ 
-                    fontWeight: 'medium',
-                    color: '#1976d2'
-                  }} 
-                />
-              </ListItemButton>
+              <>
+                <Divider sx={{ my: 1 }} />
+                <ListItemButton 
+                  onClick={() => handleNavigation('/admin/cursos')}
+                  sx={{ 
+                    borderRadius: 1.5,
+                    mb: 0.5,
+                    '&:hover': { bgcolor: '#f5f5f5' }
+                  }}
+                >
+                  <ListItemIcon>
+                    <BuildIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Administration" />
+                </ListItemButton>
+              </>
             )}
-
-            <ListItemButton 
-              onClick={() => handleNavigation('/perfil')}
-              sx={{ 
-                mx: 1, 
-                borderRadius: 1,
-                '&:hover': { bgcolor: '#e3f2fd' }
-              }}
-            >
-              <ListItemIcon>
-                <PersonIcon />
-              </ListItemIcon>
-              <ListItemText primary="Mi Perfil" />
-            </ListItemButton>
           </List>
+        </Box>
 
-          <Divider sx={{ my: 2 }} />
-
-          {/* Sección inferior */}
-          <List>
+        {/* Sección inferior */}
+        <Box sx={{ borderTop: '1px solid #e0e0e0' }}>
+          <List sx={{ px: 1, py: 1 }}>
             <ListItemButton 
               onClick={() => handleNavigation('/configuracion')}
               sx={{ 
-                mx: 1, 
-                borderRadius: 1,
-                '&:hover': { bgcolor: '#e3f2fd' }
+                borderRadius: 1.5,
+                mb: 0.5,
+                '&:hover': { bgcolor: '#f5f5f5' }
               }}
             >
               <ListItemIcon>
                 <SettingsIcon />
               </ListItemIcon>
-              <ListItemText primary="Configuración" />
+              <ListItemText primary="Settings" />
             </ListItemButton>
 
             <ListItemButton 
               onClick={handleLogout}
               sx={{ 
-                mx: 1, 
-                borderRadius: 1,
+                borderRadius: 1.5,
                 '&:hover': { bgcolor: '#ffebee' }
               }}
             >
               <ListItemIcon>
                 <ExitToAppIcon />
               </ListItemIcon>
-              <ListItemText primary="Cerrar Sesión" />
+              <ListItemText primary="Logout" />
             </ListItemButton>
           </List>
         </Box>
       </Drawer>
 
-      <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1, bgcolor: '#fafafa', minHeight: '100vh' }}>
         <Routes>
-          <Route path="/" element={<HomeScreen />} />
-          <Route path="/dashboard" element={<HomeScreen />} />
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/usuarios" element={<UsuarioScreen />} />
           <Route path="/catalogo" element={<Catalogo />} />
           <Route path="/curso/:cursoId" element={<CursoDetalleScreen />} />
-          <Route path="/perfil" element={<Box><Typography variant="h4">Mi Perfil</Typography></Box>} />
-          <Route path="/configuracion" element={<Box><Typography variant="h4">Configuración</Typography></Box>} />
+          <Route path="/schedule" element={<Box sx={{ p: 3 }}><Typography variant="h4">My Schedule</Typography></Box>} />
+          <Route path="/configuracion" element={<Box sx={{ p: 3 }}><Typography variant="h4">Settings</Typography></Box>} />
           
           {/* Ruta protegida para administración */}
           {isAdminOrInstructor && (
@@ -192,5 +224,4 @@ const AppLayout: React.FC = () => {
     </Box>
   );
 };
-
 export default AppLayout;

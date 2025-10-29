@@ -1,420 +1,317 @@
 import React from 'react';
 import {
   Box,
-  Container,
   Typography,
+  Paper,
+  Avatar,
+  LinearProgress,
+  Button,
   Card,
   CardContent,
-  CardMedia,
-  Button,
-  LinearProgress,
-  Avatar,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
 } from '@mui/material';
 import {
-  MenuBook,
-  AccessTime,
-  EmojiEvents,
-  TrendingUp,
-  Lightbulb,
-  People,
-  Assessment,
+  Code as CodeIcon,
+  Cloud as CloudIcon,
+  CheckCircle as CheckCircleIcon,
+  School as SchoolIcon,
+  Security as SecurityIcon,
+  Share as ShareIcon,
+  EmojiEvents as EmojiEventsIcon,
+  Star as StarIcon,
+  Download as DownloadIcon,
+  TrendingUp as TrendingUpIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../commons/auth/context/AuthContext';
 
-interface Course {
-  id: number;
-  title: string;
-  image: string;
-  progress: number;
-  timeRemaining: string;
-  duration: string;
-}
+// Mock data - reemplazar con datos reales del API
+const estadisticasMock = {
+  cursosCompletados: 14,
+  horasTotales: 82,
+  insigniasObtenidas: 8,
+  objetivoAnual: 100,
+  progresoAnual: 75,
+};
 
-interface Badge {
-  id: number;
-  name: string;
-  icon: React.ReactNode;
-  color: string;
-  description: string;
-}
+const insigniasMock = [
+  { id: '1', nombre: 'Code Starter', icono: <CodeIcon />, color: '#FDB022', desbloqueado: true },
+  { id: '2', nombre: 'Cloud Novice', icono: <CloudIcon />, color: '#4285F4', desbloqueado: true },
+  { id: '3', nombre: 'First 5 Courses', icono: <CheckCircleIcon />, color: '#34A853', desbloqueado: true },
+  { id: '4', nombre: 'Module Master', icono: <SchoolIcon />, color: '#9C27B0', desbloqueado: true },
+  { id: '5', nombre: 'Security Pro', icono: <SecurityIcon />, color: '#EA4335', desbloqueado: true },
+  { id: '6', nombre: 'Team Player', icono: <ShareIcon />, color: '#FF9800', desbloqueado: true },
+  { id: '7', nombre: 'Graduate', icono: <SchoolIcon />, color: '#E0E0E0', desbloqueado: false },
+  { id: '8', nombre: 'Data Whiz', icono: <TrendingUpIcon />, color: '#E0E0E0', desbloqueado: false },
+];
+
+const logrosMock = [
+  {
+    id: '1',
+    titulo: 'First 5 Courses Completed',
+    descripcion: 'Unlocked on Oct 1, 2023',
+    icono: <CheckCircleIcon sx={{ color: '#34A853' }} />,
+  },
+  {
+    id: '2',
+    titulo: 'Master of Module X',
+    descripcion: 'Unlocked on Sep 15, 2023',
+    icono: <EmojiEventsIcon sx={{ color: '#9C27B0' }} />,
+  },
+];
+
+const actividadesRecientesMock = [
+  {
+    id: '1',
+    tipo: 'completado' as const,
+    titulo: "Completed 'Advanced Python'",
+    tiempo: '2d ago',
+    color: '#34A853',
+    icono: <CheckCircleIcon />,
+  },
+  {
+    id: '2',
+    tipo: 'insignia' as const,
+    titulo: "Earned 'Data Whiz' badge",
+    tiempo: '17d ago',
+    color: '#FDB022',
+    icono: <StarIcon />,
+  },
+  {
+    id: '3',
+    tipo: 'iniciado' as const,
+    titulo: "Started 'Machine Learning Basics'",
+    tiempo: '19d ago',
+    color: '#4285F4',
+    icono: <TrendingUpIcon />,
+  },
+];
+
+const cursosCompletadosMock = [
+  {
+    id: '1',
+    titulo: 'Advanced Python Programming',
+    fechaCompletado: '2023-10-15',
+    certificadoUrl: '#',
+  },
+  {
+    id: '2',
+    titulo: 'Introduction to Cloud Computing',
+    fechaCompletado: '2023-09-22',
+    certificadoUrl: '#',
+  },
+  {
+    id: '3',
+    titulo: 'Cybersecurity Fundamentals',
+    fechaCompletado: '2023-08-01',
+    certificadoUrl: '#',
+  },
+];
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
 
-  const coursesInProgress: Course[] = [
-    {
-      id: 1,
-      title: 'Módulo de Seguridad Avanzada',
-      image: '/course1.jpg',
-      progress: 75,
-      timeRemaining: 'Quedan 2 horas',
-      duration: '8h',
-    },
-    {
-      id: 2,
-      title: 'Introducción a la Gestión de Proyectos',
-      image: '/course2.jpg',
-      progress: 25,
-      timeRemaining: 'Quedan 45 minutos',
-      duration: '6h',
-    },
-  ];
-
-  const assignedCourses: Course[] = [
-    {
-      id: 3,
-      title: 'Fundamentos de Marketing',
-      image: '/course3.jpg',
-      progress: 0,
-      timeRemaining: '',
-      duration: '4 horas',
-    },
-    {
-      id: 4,
-      title: 'Liderazgo Efectivo',
-      image: '/course4.jpg',
-      progress: 0,
-      timeRemaining: '',
-      duration: '6 horas',
-    },
-    {
-      id: 5,
-      title: 'Análisis de Datos con Python',
-      image: '/course5.jpg',
-      progress: 0,
-      timeRemaining: '',
-      duration: '12 horas',
-    },
-  ];
-
-  const badges: Badge[] = [
-    {
-      id: 1,
-      name: 'Líder nato',
-      icon: <EmojiEvents />,
-      color: '#FFD700',
-      description: 'Completaste 5 cursos de liderazgo',
-    },
-    {
-      id: 2,
-      name: 'Experto en Seguridad',
-      icon: <MenuBook />,
-      color: '#718096',
-      description: 'Certificación en seguridad',
-    },
-    {
-      id: 3,
-      name: 'Colaborador del Mes',
-      icon: <People />,
-      color: '#0EA5E9',
-      description: 'Ayudaste a 10+ compañeros',
-    },
-    {
-      id: 4,
-      name: 'Maestro de Proyectos',
-      icon: <TrendingUp />,
-      color: '#10B981',
-      description: 'Completaste proyectos destacados',
-    },
-    {
-      id: 5,
-      name: 'Mente Creativa',
-      icon: <Lightbulb />,
-      color: '#EF4444',
-      description: 'Innovación y creatividad',
-    },
-    {
-      id: 6,
-      name: 'Analista de Datos',
-      icon: <Assessment />,
-      color: '#8B5CF6',
-      description: 'Experto en análisis',
-    },
-  ];
-
-  const stats = [
-    {
-      label: 'Cursos Completados',
-      value: 12,
-      icon: <MenuBook />,
-      color: '#E0F2FE',
-    },
-    {
-      label: 'Horas de Formación',
-      value: '48h',
-      icon: <AccessTime />,
-      color: '#DCFCE7',
-    },
-    {
-      label: 'Certificados',
-      value: 8,
-      icon: <EmojiEvents />,
-      color: '#FEF3C7',
-    },
-  ];
-
   return (
-    <Box sx={{ bgcolor: '#F9FAFB', minHeight: 'calc(100vh - 64px)', py: 4 }}>
-      <Container maxWidth="xl">
-        {/* Header */}
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" fontWeight="bold" gutterBottom>
-            ¡Hola de nuevo, {user?.nombre}!
+    <Box sx={{ maxWidth: 1400, mx: 'auto', p: 3 }}>
+      {/* Header */}
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h4" fontWeight="bold" gutterBottom>
+          My Progress Dashboard
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          Welcome back, {user?.nombre}! Here's a summary of your learning journey.
+        </Typography>
+      </Box>
+
+      {/* Estadísticas principales */}
+      <Box sx={{ display: 'flex', gap: 2, mb: 4, flexWrap: 'wrap' }}>
+        <Paper sx={{ flex: '1 1 200px', p: 3, borderRadius: 2 }}>
+          <Typography variant="body2" color="text.secondary" gutterBottom>
+            Courses Completed
           </Typography>
-          <Typography variant="body1" color="text.secondary">
-            ¡Sigue así! Has completado 3 cursos este mes.
+          <Typography variant="h3" fontWeight="bold" color="primary">
+            {estadisticasMock.cursosCompletados}
           </Typography>
+        </Paper>
+
+        <Paper sx={{ flex: '1 1 200px', p: 3, borderRadius: 2 }}>
+          <Typography variant="body2" color="text.secondary" gutterBottom>
+            Total Hours
+          </Typography>
+          <Typography variant="h3" fontWeight="bold" color="primary">
+            {estadisticasMock.horasTotales}
+          </Typography>
+        </Paper>
+
+        <Paper sx={{ flex: '1 1 200px', p: 3, borderRadius: 2 }}>
+          <Typography variant="body2" color="text.secondary" gutterBottom>
+            Badges Earned
+          </Typography>
+          <Typography variant="h3" fontWeight="bold" color="primary">
+            {estadisticasMock.insigniasObtenidas}
+          </Typography>
+        </Paper>
+
+        <Paper sx={{ flex: '1 1 200px', p: 3, borderRadius: 2 }}>
+          <Typography variant="body2" color="text.secondary" gutterBottom>
+            Annual Training Target
+          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 1 }}>
+            <Box sx={{ flex: 1 }}>
+              <LinearProgress
+                variant="determinate"
+                value={estadisticasMock.progresoAnual}
+                sx={{
+                  height: 8,
+                  borderRadius: 5,
+                  bgcolor: '#e0e0e0',
+                  '& .MuiLinearProgress-bar': {
+                    bgcolor: '#34A853',
+                  },
+                }}
+              />
+            </Box>
+            <Typography variant="h5" fontWeight="bold" color="#34A853">
+              {estadisticasMock.progresoAnual}%
+            </Typography>
+          </Box>
+        </Paper>
+      </Box>
+
+      {/* Contenido principal */}
+      <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', lg: 'row' } }}>
+        {/* Columna izquierda */}
+        <Box sx={{ flex: 1 }}>
+          {/* Insignias */}
+          <Paper sx={{ p: 3, mb: 3, borderRadius: 2 }}>
+            <Typography variant="h6" fontWeight="bold" gutterBottom>
+              My Badges
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, mt: 3 }}>
+              {insigniasMock.map((insignia) => (
+                <Box
+                  key={insignia.id}
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 1,
+                    opacity: insignia.desbloqueado ? 1 : 0.4,
+                  }}
+                >
+                  <Avatar
+                    sx={{
+                      width: 80,
+                      height: 80,
+                      bgcolor: insignia.color,
+                      boxShadow: insignia.desbloqueado ? 2 : 0,
+                    }}
+                  >
+                    {insignia.icono}
+                  </Avatar>
+                  <Typography
+                    variant="caption"
+                    align="center"
+                    sx={{ maxWidth: 80, fontSize: '0.7rem' }}
+                  >
+                    {insignia.nombre}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          </Paper>
+
+          {/* Cursos completados */}
+          <Paper sx={{ p: 3, borderRadius: 2 }}>
+            <Typography variant="h6" fontWeight="bold" gutterBottom>
+              Completed Courses
+            </Typography>
+            <List>
+              {cursosCompletadosMock.map((curso) => (
+                <ListItem
+                  key={curso.id}
+                  sx={{
+                    border: '1px solid #e0e0e0',
+                    borderRadius: 1,
+                    mb: 1,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Box>
+                    <Typography variant="body1" fontWeight="medium">
+                      {curso.titulo}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      Completed on: {curso.fechaCompletado}
+                    </Typography>
+                  </Box>
+                  <Button
+                    variant="text"
+                    size="small"
+                    startIcon={<DownloadIcon />}
+                    sx={{ textTransform: 'none' }}
+                  >
+                    Certificate
+                  </Button>
+                </ListItem>
+              ))}
+            </List>
+          </Paper>
         </Box>
 
-        {/* Contenedor Principal */}
-        <Box sx={{ display: 'flex', gap: 3, flexWrap: { xs: 'wrap', lg: 'nowrap' } }}>
-          {/* Columna Principal */}
-          <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 65%' } }}>
-            {/* Cursos en Progreso */}
-            <Box sx={{ mb: 4 }}>
-              <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ mb: 2 }}>
-                En Progreso
-              </Typography>
-              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                {coursesInProgress.map((course) => (
-                  <Box
-                    key={course.id}
-                    sx={{
-                      flex: { xs: '1 1 100%', md: '1 1 calc(50% - 8px)' },
-                      minWidth: 0,
-                    }}
-                  >
-                    <Card 
-                      sx={{ 
-                        height: '100%', 
-                        display: 'flex', 
-                        flexDirection: 'column',
-                        boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1)',
-                      }}
-                    >
-                      <CardMedia
-                        component="div"
-                        sx={{
-                          height: 180,
-                          bgcolor: '#1F2937',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        <Box
-                          sx={{
-                            width: 2,
-                            height: 80,
-                            bgcolor: 'white',
-                            opacity: 0.5,
-                          }}
-                        />
-                      </CardMedia>
-                      <CardContent sx={{ flexGrow: 1, p: 2.5 }}>
-                        <Typography variant="h6" fontWeight="bold" gutterBottom>
-                          {course.title}
-                        </Typography>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                          <Typography variant="body2" sx={{ color: '#0EA5E9', fontWeight: 'medium' }}>
-                            {course.progress}% completado
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            {course.timeRemaining}
-                          </Typography>
-                        </Box>
-                        <LinearProgress
-                          variant="determinate"
-                          value={course.progress}
-                          sx={{ 
-                            mb: 2, 
-                            height: 8, 
-                            borderRadius: 4,
-                            bgcolor: '#E0F2FE',
-                            '& .MuiLinearProgress-bar': {
-                              bgcolor: '#0EA5E9',
-                            }
-                          }}
-                        />
-                        <Button
-                          variant="contained"
-                          fullWidth
-                          sx={{
-                            bgcolor: '#0EA5E9',
-                            textTransform: 'none',
-                            fontWeight: 'medium',
-                            py: 1,
-                            '&:hover': { bgcolor: '#0284C7' },
-                          }}
-                        >
-                          Continuar Aprendiendo
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  </Box>
-                ))}
-              </Box>
-            </Box>
-
-            {/* Cursos Asignados */}
-            <Box>
-              <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ mb: 2 }}>
-                Cursos Asignados
-              </Typography>
-              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                {assignedCourses.map((course) => (
-                  <Box
-                    key={course.id}
-                    sx={{
-                      flex: {
-                        xs: '1 1 100%',
-                        sm: '1 1 calc(50% - 8px)',
-                        md: '1 1 calc(33.333% - 11px)',
-                      },
-                      minWidth: 0,
-                    }}
-                  >
-                    <Card 
-                      sx={{ 
-                        height: '100%', 
-                        display: 'flex', 
-                        flexDirection: 'column',
-                        boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1)',
-                      }}
-                    >
-                      <CardMedia
-                        component="div"
-                        sx={{
-                          height: 140,
-                          bgcolor: '#E5E7EB',
-                        }}
-                      />
-                      <CardContent sx={{ flexGrow: 1, p: 2 }}>
-                        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                          {course.title}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary" gutterBottom>
-                          {course.duration}
-                        </Typography>
-                        <Button
-                          variant="outlined"
-                          fullWidth
-                          sx={{
-                            mt: 2,
-                            borderColor: '#0EA5E9',
-                            color: '#0EA5E9',
-                            textTransform: 'none',
-                            fontWeight: 'medium',
-                            '&:hover': {
-                              borderColor: '#0284C7',
-                              bgcolor: '#E0F2FE',
-                            },
-                          }}
-                        >
-                          Comenzar
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  </Box>
-                ))}
-              </Box>
-            </Box>
-          </Box>
-
-          {/* Columna Lateral */}
-          <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 35%' } }}>
-            {/* Mis Estadísticas */}
-            <Box sx={{ mb: 3 }}>
-              <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ mb: 2 }}>
-                Mis Estadísticas
-              </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                {stats.map((stat, index) => (
-                  <Card key={index} sx={{ boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1)' }}>
-                    <CardContent sx={{ p: 2.5 }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Avatar
-                          sx={{
-                            bgcolor: stat.color,
-                            width: 48,
-                            height: 48,
-                            color: 'text.primary',
-                          }}
-                        >
-                          {stat.icon}
-                        </Avatar>
-                        <Box>
-                          <Typography variant="body2" color="text.secondary">
-                            {stat.label}
-                          </Typography>
-                          <Typography variant="h5" fontWeight="bold">
-                            {stat.value}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                ))}
-              </Box>
-            </Box>
-
-            {/* Insignias Obtenidas */}
-            <Box>
-              <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ mb: 2 }}>
-                Insignias Obtenidas
-              </Typography>
-              <Card sx={{ boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1)' }}>
-                <CardContent sx={{ p: 2.5 }}>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      gap: 2,
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    {badges.map((badge) => (
-                      <Box
-                        key={badge.id}
-                        sx={{
-                          flex: '1 1 calc(33.333% - 11px)',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          textAlign: 'center',
-                          minWidth: 70,
-                        }}
-                      >
-                        <Avatar
-                          sx={{
-                            bgcolor: badge.color,
-                            width: 56,
-                            height: 56,
-                            mb: 1,
-                            color: 'white',
-                          }}
-                        >
-                          {badge.icon}
-                        </Avatar>
-                        <Typography 
-                          variant="caption" 
-                          fontWeight="medium"
-                          sx={{ 
-                            lineHeight: 1.2,
-                            fontSize: '0.7rem'
-                          }}
-                        >
-                          {badge.name}
-                        </Typography>
-                      </Box>
-                    ))}
+        {/* Columna derecha */}
+        <Box sx={{ width: { xs: '100%', lg: 400 } }}>
+          {/* Logros */}
+          <Paper sx={{ p: 3, mb: 3, borderRadius: 2 }}>
+            <Typography variant="h6" fontWeight="bold" gutterBottom>
+              Achievements
+            </Typography>
+            {logrosMock.map((logro) => (
+              <Card key={logro.id} sx={{ mb: 2, boxShadow: 0, border: '1px solid #e0e0e0' }}>
+                <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Avatar sx={{ bgcolor: 'transparent' }}>{logro.icono}</Avatar>
+                  <Box>
+                    <Typography variant="body1" fontWeight="medium">
+                      {logro.titulo}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {logro.descripcion}
+                    </Typography>
                   </Box>
                 </CardContent>
               </Card>
-            </Box>
-          </Box>
+            ))}
+          </Paper>
+
+          {/* Actividad reciente */}
+          <Paper sx={{ p: 3, borderRadius: 2 }}>
+            <Typography variant="h6" fontWeight="bold" gutterBottom>
+              Recent Activity
+            </Typography>
+            <List>
+              {actividadesRecientesMock.map((actividad) => (
+                <ListItem key={actividad.id} sx={{ px: 0 }}>
+                  <ListItemAvatar>
+                    <Avatar sx={{ bgcolor: actividad.color, width: 40, height: 40 }}>
+                      {actividad.icono}
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={actividad.titulo}
+                    secondary={actividad.tiempo}
+                    primaryTypographyProps={{ variant: 'body2' }}
+                    secondaryTypographyProps={{ variant: 'caption' }}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Paper>
         </Box>
-      </Container>
+      </Box>
     </Box>
   );
 };
