@@ -10,14 +10,19 @@ import {
   Alert,
   CircularProgress,
 } from "@mui/material";
+import "../styles/styles.css";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
   const { setUser } = useAuth();
+  const navigate = useNavigate();
+
+  const handleCreateAccount = () => {
+    navigate("/register");
+  }
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,6 +79,16 @@ export default function Login() {
           sx={{ mt: 3 }}
         >
           {loading ? <CircularProgress size={24} /> : "Ingresar"}
+        </Button>
+        <Button
+          type="button"
+          variant="outlined"
+          fullWidth
+          size="large"
+          onClick={handleCreateAccount}
+          sx={{ mt: 2 }}
+        >
+          Crear Cuenta Nueva
         </Button>
       </form>
     </Box>
