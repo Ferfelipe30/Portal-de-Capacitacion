@@ -6,6 +6,7 @@ from .views import (
     InscripcionList, InscripcionCrear, InscripcionActualizar, InscripcionEliminar,
     InsigniaList, InsigniaCrear, InsigniaActualizar, InsigniaEliminar,
     UsuarioInsigniaList, UsuarioInsigniaCrear, UsuarioInsigniaActualizar, UsuarioInsigniaEliminar,
+    UsuarioInsigniasPorUsuario,
     ComentarioList, ComentarioCrear, ComentarioActualizar, ComentarioEliminar,
     LeccionList, LeccionCrear, LeccionActualizar, LeccionEliminar,
     ProgresoLeccionList, ProgresoLeccionCrear, ProgresoLeccionActualizar, ProgresoLeccionEliminar,
@@ -21,6 +22,7 @@ urlpatterns = [
     path('usuarios/crear/', UsuarioCrear.as_view(), name='usuario-crear'),
     path('usuarios/<int:id_usuario>/actualizar/', UsuarioActualizar.as_view(), name='usuario-actualizar'),
     path('usuarios/<int:id_usuario>/eliminar/', UsuarioEliminar.as_view(), name='usuario-eliminar'),
+    path('usuarios/<int:id_usuario>/insignias/', UsuarioInsigniasPorUsuario.as_view(), name='usuario-insignias-por-usuario'),
     # Modulos
     path('modulos/', ModuloList.as_view(), name='modulo-list'),
     path('modulos/crear/', ModuloCrear.as_view(), name='modulo-crear'),

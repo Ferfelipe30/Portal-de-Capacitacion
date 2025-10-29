@@ -22,6 +22,11 @@ const HomeScreen: React.FC = () => {
         setAnchorEl(null);
     };
 
+    const handlePerfil = () => {
+        handleClose();
+        navigate('/perfil');
+    };
+
     const handleLogout = () => {
         logout();
         handleClose();
@@ -81,7 +86,7 @@ const HomeScreen: React.FC = () => {
                                         {user?.rol} - {user?.departamento}
                                     </Typography>
                                 </MenuItem>
-                                <MenuItem onClick={handleClose}>Mi Perfil</MenuItem>
+                                <MenuItem onClick={handlePerfil}>Mi Perfil</MenuItem>
                                 <MenuItem onClick={handleLogout}>Cerrar Sesión</MenuItem>
                             </Menu>
                         </div>

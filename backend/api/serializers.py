@@ -98,10 +98,23 @@ class InsigniaSerializer(serializers.ModelSerializer):
 class InsigniaUsuarioSerializer(serializers.ModelSerializer):
     usuario_nombre = serializers.CharField(source='usuario.nombre', read_only=True)
     insignia_nombre = serializers.CharField(source='insignia.nombre', read_only=True)
+    # Nested insignia for reads
+    insignia = InsigniaSerializer(read_only=True)
+    # Allow writing by id
+    insignia_id = serializers.PrimaryKeyRelatedField(source='insignia', queryset=insignias.objects.all(), write_only=True, required=False)
 
     class Meta:
         model = usuario_insignias
-        fields = '__all__'
+        fields = [
+            'id_usuario_insignia',
+            'usuario',
+            'insignia',
+            'insignia_id',
+            'capacitaciones',
+            'fecha_obtencion',
+            'usuario_nombre',
+            'insignia_nombre',
+        ]
         extra_kwargs = {
             'id_usuario_insignia': {'read_only': True},
             'fecha_obtencion': {'read_only': True},

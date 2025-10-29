@@ -284,6 +284,27 @@ class UsuarioInsigniaEliminar(generics.DestroyAPIView):
         usuario_insignias = get_object_or_404(usuario_insignias, id_usuario_insignia=id_usuario_insignia)
         usuario_insignias.delete()
         return Response({'success': True, 'details': 'Insignia de usuario eliminada exitosamente.'}, status=status.HTTP_204_NO_CONTENT)
+
+
+class UsuarioInsigniasPorUsuario(generics.ListAPIView):
+    """List insignias for a specific usuario (by id_usuario).
+    Authentication is disabled here to avoid conflicts with Django's default User model,
+    since JWT tokens were generated from the custom `usuarios` model. If you want to
+    secure this endpoint, consider migrating to a proper custom AUTH_USER_MODEL or
+    implement a custom JWTAuthentication that queries `api.usuarios`.
+    """
+    serializer_class = InsigniaUsuarioSerializer
+    authentication_classes = []  # Avoid JWT auth on this endpoint to prevent FieldError
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        id_usuario = self.kwargs.get('id_usuario')
+        return usuario_insignias.objects.filter(usuario_id=id_usuario).order_by('-fecha_obtencion')
+
+    def get(self, request, id_usuario):
+        qs = self.get_queryset()
+        serializer = InsigniaUsuarioSerializer(qs, many=True)
+        return Response({'success': True, 'details': 'Listado de insignias del usuario.', 'data': serializer.data}, status=status.HTTP_200_OK)
     
 class ComentarioList(generics.ListCreateAPIView):
     queryset = comentarios.objects.all()

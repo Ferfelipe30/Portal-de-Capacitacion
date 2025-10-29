@@ -17,12 +17,14 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import HomeIcon from '@mui/icons-material/Home';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SchoolIcon from '@mui/icons-material/School';
 import UsuarioScreen from "../commons/usuario/screens/usuarioScreen";
 import Catalogo from "../commons/capacitaciones/Catalogo/Catalogo";
 import AdminCursosScreen from "../commons/capacitaciones/screens/AdminCursosScreen";
 import CursoDetalleScreen from "../commons/capacitaciones/screens/CursoDetalleScreen";
 import Dashboard from "./Dashboard";
+import PerfilScreen from "../commons/usuario/screens/PerfilScreen";
 import { useAuth } from "../commons/auth/context/AuthContext";
 
 const drawerWidth = 240;
@@ -123,6 +125,20 @@ const AppLayout: React.FC = () => {
             </ListItemButton>
 
             <ListItemButton 
+              onClick={() => handleNavigation('/perfil')}
+              sx={{ 
+                borderRadius: 1.5,
+                mb: 0.5,
+                '&:hover': { bgcolor: '#f5f5f5' }
+              }}
+            >
+              <ListItemIcon>
+                <AccountCircleIcon />
+              </ListItemIcon>
+              <ListItemText primary="My Profile" />
+            </ListItemButton>
+
+            <ListItemButton 
               onClick={() => handleNavigation('/catalogo')}
               sx={{ 
                 borderRadius: 1.5,
@@ -209,6 +225,7 @@ const AppLayout: React.FC = () => {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/perfil" element={<PerfilScreen />} />
           <Route path="/usuarios" element={<UsuarioScreen />} />
           <Route path="/catalogo" element={<Catalogo />} />
           <Route path="/curso/:cursoId" element={<CursoDetalleScreen />} />
