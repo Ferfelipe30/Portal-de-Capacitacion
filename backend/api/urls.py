@@ -11,7 +11,7 @@ from .views import (
     ProgresoLeccionList, ProgresoLeccionCrear, ProgresoLeccionActualizar, ProgresoLeccionEliminar,
     NotificacionList, NotificacionCrear, NotificacionActualizar, NotificacionEliminar,
     EstadisticaList, EstadisticaCrear, EstadisticaActualizar, EstadisticaEliminar,
-    EmailLoginView, MeView
+    LoginView
 )
 from rest_framework_simplejwt.views import TokenRefreshView
 
@@ -72,7 +72,6 @@ urlpatterns = [
     path('estadisticas/<int:id_estadistica>/actualizar/', EstadisticaActualizar.as_view(), name='estadistica-actualizar'),
     path('estadisticas/<int:id_estadistica>/eliminar/', EstadisticaEliminar.as_view(), name='estadistica-eliminar'),
     # Autenticación
-    path('auth/login/', EmailLoginView.as_view(), name='email-login'),
+    path('auth/login/', LoginView.as_view(), name='email-login'),
     path('auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('auth/me/', MeView.as_view(), name='me'),
 ]

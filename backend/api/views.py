@@ -1,10 +1,13 @@
 from django.shortcuts import render, get_object_or_404
+from django.contrib.auth import authenticate
 from rest_framework import generics, status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.permissions import IsAuthenticated
 from .models import usuarios, modulos, capacitaciones, inscripciones, insignias, usuario_insignias, comentarios, lecciones, progreso_lecciones, notificaciones, estadisticas
 from .serializers import UsuarioSerializer, ModuloSerializer, CapacitacionSerializer, InscripcionSerializer, InsigniaSerializer, InsigniaUsuarioSerializer, ComentarioSerializer, LeccionSerializer, ProgresoLeccionSerializer, NotificacionSerializer, EstadisticaSerializer, EmailLoginSerializer
 
@@ -481,36 +484,26 @@ class EstadisticaEliminar(generics.DestroyAPIView):
         estadisticas.delete()
         return Response({'success': True, 'details': 'Estadística eliminada exitosamente.'}, status=status.HTTP_204_NO_CONTENT)
     
-class EmailLoginView(APIView):
-    permission_classes = [permissions.AllowAny]
+class LoginView(APIView):
+    permission_classes = [AllowAny]
 
     def post(self, request):
         serializer = EmailLoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data["user"]
-
+        
+        # Obtener usuario del serializer validado
+        user_data = serializer.validated_data['user']
+        user = usuarios.objects.get(id_usuario=user_data['id_usuario'])
+        
+        # Generar tokens JWT
         refresh = RefreshToken.for_user(user)
+        
         return Response({
-            "access": str(refresh.access_token),
-            "refresh": str(refresh),
-            "user": {
-                "id": user.id,
-                "email": user.email,
-                "username": getattr(user, "username", None),
-                "first_name": getattr(user, "first_name", ""),
-                "last_name": getattr(user, "last_name", ""),
+            'success': True,
+            'details': 'Inicio de sesión exitoso.',
+            'data': {
+                'user': user_data,
+                'access': str(refresh.access_token),
+                'refresh': str(refresh),
             }
         }, status=status.HTTP_200_OK)
-    
-class MeView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        u = request.user
-        return Response({
-            "id": u.id,
-            "email": u.email,
-            "username": getattr(u, "username", None),
-            "first_name": getattr(u, "first_name", ""),
-            "last_name": getattr(u, "last_name", ""),
-        })

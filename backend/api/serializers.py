@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from django.contrib.auth.hashers import check_password
 from django.contrib.auth.hashers import make_password
 from .models import usuarios, modulos, capacitaciones, inscripciones, insignias, usuario_insignias, comentarios, lecciones, progreso_lecciones, notificaciones, estadisticas
 
@@ -187,13 +186,30 @@ class EmailLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
 
-    def validate(self, data):
-        email = data.get('email')
-        password = data.get('password')
-
-        user = User.objects.filter(email_iexact=email).first()
-        if user is None or not check_password(password, user.password):
-            raise serializers.ValidationError("Credenciales inválidas.")
-        
-        attrs["user"] = user # type: ignore
-        return attrs # type: ignore
+    def validate(self, attrs):
+        try:
+            user = usuarios.objects.get(email=attrs['email'])
+            if not user.check_password(attrs['password']):
+                raise serializers.ValidationError('Credenciales inválidas.')
+            
+            # Actualizar última conexión
+            from django.utils import timezone
+            user.ultima_conexion = timezone.now()
+            user.save(update_fields=['ultima_conexion'])
+            
+            return {
+                'user': {
+                    'id_usuario': user.id_usuario,
+                    'nombre': user.nombre,
+                    'apellido': user.apellido,
+                    'email': user.email,
+                    'rol': user.rol,
+                    'departamento': user.departamento,
+                    'fecha_registro': user.fecha_registro,
+                    'ultima_conexion': user.ultima_conexion,
+                    'estado': user.estado,
+                    'foto_perfil': user.foto_perfil.url if user.foto_perfil else None,
+                }
+            }
+        except usuarios.DoesNotExist:
+            raise serializers.ValidationError('Credenciales inválidas.')    
