@@ -4,6 +4,7 @@ import { AuthProvider } from './commons/auth/context/AuthContext';
 import AppLayout from './components/AppLayout';
 import LoginScreen from './commons/auth/screens/loginScreens';
 import CursoDetalleScreen from './commons/capacitaciones/screens/CursoDetalleScreen';
+import AdminCursosScreen from './commons/capacitaciones/screens/AdminCursosScreen';
 
 const App: React.FC = () => {
   return (
@@ -13,6 +14,7 @@ const App: React.FC = () => {
           <Route path="/login" element={<LoginScreen />} />
           <Route path="/*" element={<AppLayout />} />
           <Route path="/curso/:id" element={<CursoDetalleScreen />} />
+          <Route path="/admin/cursos" element={<AdminCursosScreen />} />
         </Routes>
       </Router>
     </AuthProvider>
