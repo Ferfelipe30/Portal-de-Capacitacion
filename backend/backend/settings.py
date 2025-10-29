@@ -33,6 +33,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'api',
+    # optional: django-storages for S3/MinIO backends
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -103,15 +105,41 @@ DATABASES = {
     }
 }
 
-# Email settings via .env (consola por defecto si no configuras nada)
-EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
-EMAIL_HOST = os.getenv('EMAIL_HOST', '')
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', '0') or 0)
-EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'False') == 'True'
-EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False') == 'True'
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'no-reply@example.com')
+# Email settings via environment variables.
+# Default: use Mailhog (local SMTP) in development when USE_MAILHOG=True (recommended).
+# You can also configure SendGrid SMTP by setting SENDGRID_API_KEY in env.
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='no-reply@example.com')
+
+# Toggle using Mailhog locally (recommended for dev). If True, Mailhog host/port will be used.
+USE_MAILHOG = config('USE_MAILHOG', default=True, cast=bool)
+if USE_MAILHOG:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = config('MAILHOG_HOST', default='localhost')
+    EMAIL_PORT = config('MAILHOG_PORT', default=1025, cast=int)
+    EMAIL_USE_TLS = config('MAILHOG_USE_TLS', default=False, cast=bool)
+    EMAIL_USE_SSL = config('MAILHOG_USE_SSL', default=False, cast=bool)
+    EMAIL_HOST_USER = config('MAILHOG_HOST_USER', default='')
+    EMAIL_HOST_PASSWORD = config('MAILHOG_HOST_PASSWORD', default='')
+else:
+    # If SENDGRID_API_KEY is present, configure SendGrid SMTP (smtp.sendgrid.net)
+    SENDGRID_API_KEY = config('SENDGRID_API_KEY', default='')
+    if SENDGRID_API_KEY:
+        EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+        EMAIL_HOST = 'smtp.sendgrid.net'
+        EMAIL_PORT = 587
+        EMAIL_USE_TLS = True
+        EMAIL_HOST_USER = 'apikey'  # SendGrid username when using API key via SMTP
+        EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
+    else:
+        # Fallback: read explicit EMAIL_* env vars or use console backend
+        EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
+        EMAIL_HOST = config('EMAIL_HOST', default='')
+        EMAIL_PORT = config('EMAIL_PORT', default=0, cast=int)
+        EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=False, cast=bool)
+        EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
+        EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+        EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -148,6 +176,30 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Media / file storage
+# By default, store uploaded files locally under `media/` (for development).
+# To use MinIO (S3-compatible), set MINIO_ENABLED=True and provide the MINIO_* env vars.
+MINIO_ENABLED = config('MINIO_ENABLED', default=False, cast=bool)
+if MINIO_ENABLED:
+    # Use django-storages S3 backend pointed to MinIO
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    AWS_S3_ENDPOINT_URL = config('MINIO_ENDPOINT', default='')  # e.g. http://127.0.0.1:9000
+    AWS_ACCESS_KEY_ID = config('MINIO_ACCESS_KEY', default='')
+    AWS_SECRET_ACCESS_KEY = config('MINIO_SECRET_KEY', default='')
+    AWS_STORAGE_BUCKET_NAME = config('MINIO_BUCKET_NAME', default='media')
+    AWS_S3_REGION_NAME = config('MINIO_REGION', default='us-east-1')
+    AWS_S3_SIGNATURE_VERSION = 's3v4'
+    # Use path-style addressing for MinIO; some setups may prefer 'path' or 'virtual'
+    AWS_S3_ADDRESSING_STYLE = config('MINIO_ADDRESSING_STYLE', default='path')
+    # Optional: make media url point directly to MinIO endpoint/bucket
+    if AWS_S3_ENDPOINT_URL:
+        MEDIA_URL = f"{AWS_S3_ENDPOINT_URL.rstrip('/')}/{AWS_STORAGE_BUCKET_NAME}/"
+    else:
+        MEDIA_URL = f"/media/"
+else:
+    MEDIA_ROOT = BASE_DIR / 'media'
+    MEDIA_URL = '/media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
