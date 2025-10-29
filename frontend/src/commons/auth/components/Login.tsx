@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../services/services";
+import { useAuth } from "../context/AuthContext";
 import {
   Box,
   TextField,
@@ -16,13 +17,15 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { setUser } = useAuth();
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     try {
-      await login({ email, password });
+      const user = await login({ email, password });
+      setUser(user);
       navigate("/");
     } catch (err) {
       setError("Credenciales inválidas.");

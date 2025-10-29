@@ -1,6 +1,6 @@
 import React from "react";
 import {Routes, Route, Link} from "react-router-dom";
-import {Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography, Collapse} from '@mui/material';
+import {Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import HomeScreen from "./HomeScreen";
 import UsuarioScreen from "../commons/usuario/screens/usuarioScreen";
